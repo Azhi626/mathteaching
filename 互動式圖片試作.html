@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>指數與對數的互換與轉換</title>
+<style>
+    :root {
+        --base-color: #e63946;   /* 紅色：底數 */
+        --exp-color: #457b9d;    /* 藍色：指數/對數 */
+        --res-color: #2a9d8f;    /* 綠色：真數/結果 */
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-color: #333;
+    }
+
+    body {
+        font-family: 'Segoe UI', Microsoft JhengHei, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1, h2, h3 { color: #1d3557; }
+    
+    .container {
+        max-width: 900px;
+        width: 100%;
+    }
+
+    /* 卡片樣式 */
+    .section-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .section-title {
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    /* 數學式通用樣式 */
+    .math-display {
+        font-size: 2.5em;
+        font-family: 'Times New Roman', serif;
+        text-align: center;
+        margin: 20px 0;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    /* 互動元素樣式 */
+    .interactive {
+        position: relative;
+        cursor: help;
+        padding: 0 5px;
+        transition: all 0.3s ease;
+        border-radius: 5px;
+    }
+
+    .interactive:hover { background-color: #eee; transform: scale(1.1); }
+
+    /* 顏色定義 */
+    .val-base { color: var(--base-color); font-weight: bold; }
+    .val-exp { color: var(--exp-color); font-weight: bold; }
+    .val-res { color: var(--res-color); font-weight: bold; }
+
+    /* Tooltip 提示框 */
+    .tooltip-box {
+        visibility: hidden;
+        width: 180px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px;
+        position: absolute;
+        z-index: 10;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.4em; /* 相對於數學式 */
+        font-family: sans-serif;
+        opacity: 0;
+        transition: opacity 0.3s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .interactive:hover .tooltip-box {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    /* 箭頭與連線 SVG */
+    .arrow-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0.3;
+        transition: opacity 0.3s;
+    }
+    
+    .math-wrapper:hover .arrow-svg { opacity: 1; }
+
+    /* 雙欄佈局 */
+    .cols-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    @media (max-width: 768px) { .cols-2 { grid-template-columns: 1fr; } }
+
+    /* 註釋文字 */
+    .note-text {
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* 限制條件方塊 */
+    .constraint-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        color: #856404;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 10px;
+        font-size: 1.2em;
+    }
+
+    /* 常用對數隱藏效果 */
+    .hidden-base {
+        opacity: 0;
+        transition: opacity 0.5s;
+        font-size: 0.8em;
+    }
+    .math-display:hover .hidden-base { opacity: 1; color: var(--base-color); }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align: center;">指數與對數的互換與轉換教學</h1>
+
+    <div class="section-card">
+        <div class="section-title">區塊一：定義與基本概念</div>
+        <p>把滑鼠移到數字上查看詳細定義。</p>
+        
+        <div class="cols-2">
+            <div>
+                <h3>1. 指數 (Exponent)</h3>
+                <p>定義：表示一個數自乘的次數。</p>
+                <div class="math-display math-wrapper">
+                    <div>
+                        <span class="interactive val-base">a
+                            <span class="tooltip-box">底數 (Base)<br>基礎的數字</span>
+                        </span>
+                        <sup class="interactive val-exp">x
+                            <span class="tooltip-box">指數 (Exponent)<br>自乘 x 次</span>
+                        </sup>
+                        = 
+                        <span class="interactive val-res">b
+                            <span class="tooltip-box">結果/冪 (Power)<br>計算出來的數值</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="note-text">例：<span class="val-base">2</span><sup><span class="val-exp">3</span></sup> = <span class="val-res">8</span></div>
+            </div>
+
+            <div>
+                <h3>2. 對數 (Logarithm)</h3>
+                <p>定義：指數的反運算，求「底數要自乘幾次才等於真數」。</p>
+                <div class="math-display math-wrapper">
+                    <div>
+                        log
+                        <sub class="interactive val-base">a
+                            <span class="tooltip-box">底數 (Base)<br>標準的基準</span>
+                        </sub>
+                        <span class="interactive val-res">b
+                            <span class="tooltip-box">真數 (Argument)<br>想要的目標數值</span>
+                        </span>
+                        = 
+                        <span class="interactive val-exp">x
+                            <span class="tooltip-box">對數 (Logarithm)<br>其實就是指數！</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="note-text">意指：<span class="val-base">a</span> 需要 <span class="val-exp">x</span> 次方才能變成 <span class="val-res">b</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-title">區塊二：互換關係 (核心概念)</div>
+        <p><strong>核心概念：</strong> 指數式和對數式只是同一種數學關係的不同表達方式。</p>
+        <p style="text-align: center; color: #666;">↓ 請將滑鼠移到下方算式，觀察循環關係 ↓</p>
+
+        <div class="math-display math-wrapper" style="justify-content: space-around; padding: 40px 0;">
+            <svg class="arrow-svg" viewBox="0 0 600 150" style="overflow: visible;">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#e63946" />
+                    </marker>
+                    <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#457b9d" />
+                    </marker>
+                </defs>
+                <path d="M 230 40 L 320 40" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                <path d="M 320 50 L 230 50" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                
+                <path d="M 400 60 Q 450 100, 530 50" fill="none" stroke="#e63946" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)" />
+                <path d="M 540 30 Q 500 -20, 450 30" fill="none" stroke="#457b9d" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead-blue)" />
+            </svg>
+
+            <div class="interactive">
+                <span class="val-base">a</span><sup class="val-exp">x</sup> = <span class="val-res">b</span>
+            </div>
+            
+            <div class="interactive" style="margin-left: 100px;">
+                log<sub class="val-base">a</sub> <span class="val-res">b</span> = <span class="val-exp">x</span>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="cols-2">
+            <div>
+                <h4>例子一：從指數到對數</h4>
+                <p>如果 <span class="val-base">2</span><sup><span class="val-exp">3</span></sup> = <span class="val-res">8</span>，則：</p>
+                <div class="math-display" style="font-size: 1.8em;">
+                    log<sub class="val-base">2</sub> <span class="val-res">8</span> = <span class="val-exp">3</span>
+                </div>
+                <div class="note-text">
+                    <span class="val-base" style="border:1px solid var(--base-color); padding:2px;">2 是底數</span> 
+                    <span class="val-exp" style="border:1px solid var(--exp-color); padding:2px;">3 是指數</span> 
+                    <span class="val-res" style="border:1px solid var(--res-color); padding:2px;">8 是真數</span>
+                </div>
+            </div>
+
+            <div>
+                <h4>例子二：從對數到指數</h4>
+                <p>如果 log<sub class="val-base">10</sub> <span class="val-res">100</span> = <span class="val-exp">2</span>，則：</p>
+                <div class="math-display" style="font-size: 1.8em;">
+                    <span class="val-base">10</span><sup><span class="val-exp">2</span></sup> = <span class="val-res">100</span>
+                </div>
+                <div class="note-text">
+                    <span class="val-base" style="border:1px solid var(--base-color); padding:2px;">10 是底數</span> 
+                    <span class="val-exp" style="border:1px solid var(--exp-color); padding:2px;">2 是對數</span> 
+                    <span class="val-res" style="border:1px solid var(--res-color); padding:2px;">100 是真數</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-title">區塊三：注意事項與特殊情況</div>
+        
+        <div class="cols-2">
+            <div>
+                <h4>底數的限制 (Base a)</h4>
+                <div class="constraint-box">
+                    <span class="val-base">a</span> > 0 且 <span class="val-base">a</span> ≠ 1
+                </div>
+                <p class="note-text">底數必須是正數，且不能是 1</p>
+            </div>
+            <div>
+                <h4>真數的限制 (Argument b)</h4>
+                <div class="constraint-box">
+                    <span class="val-res">b</span> > 0
+                </div>
+                <p class="note-text">真數必須嚴格大於 0</p>
+            </div>
+        </div>
+
+        <hr style="margin: 20px 0;">
+
+        <h3>常用對數 (Common Logarithm)</h3>
+        <p>當底數為 10 時，通常省略不寫。 <span style="font-size: 0.8em; color: gray;">(請將滑鼠移到下方 log 上查看省略的底數)</span></p>
+        
+        <div class="math-display interactive">
+            log<sub class="hidden-base">10</sub> <span class="val-res">100</span> = <span class="val-exp">2</span>
+            &nbsp; $\implies$ &nbsp;
+            <span class="val-base">10</span><sup><span class="val-exp">2</span></sup> = <span class="val-res">100</span>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
